@@ -1,4 +1,5 @@
-# Auth and blog server for personal use
+# Auth server for personal use
 
-!!Still in test phase
-routes details comming soon
+!!Still in test phase.\
+
+routes details are comming soon

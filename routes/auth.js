@@ -10,7 +10,9 @@ const User = require("../models/user.model");
 
 router.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).json(error.details[0].message);
+  const emailExist = await User.findOne({ email: req.body.email });
+  if (emailExist) return res.status(400).json("email already exist");
   const saltRounds = 10;
   const hashPassword = await bcrypt.hash(
     req.body.password.toString(),
@@ -31,7 +33,7 @@ router.post("/register", async (req, res) => {
 });
 router.post("/login", async (req, res) => {
   const { error } = loginValidation(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).json(error.details[0].message);
 
   const user = await User.findOne({ email: req.body.email });
   if (!user) return res.status(401).send("user not found");
@@ -42,7 +44,7 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign({ user: user._id }, process.env.TOKEN_SECRET);
     return res
       .cookie("authToken", token, { httpOnly: true })
-      .redirect("/posts");
+      .send("logged in ");
   }
 });
 
